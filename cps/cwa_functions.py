@@ -2289,11 +2289,15 @@ def get_status():
 @profile_pictures.route("/user_profiles.json")
 @user_login_required
 def user_profiles_json():
+    json_path = os.environ.get("CWA_USER_PROFILES_FILE") or "/config/user_profiles.json"
     try:
-        json_path = "/config/user_profiles.json"
         with open(json_path, "r") as file:
             data = json.load(file)
         return jsonify(data)
+    except FileNotFoundError:
+        # No profiles saved yet: return an empty set rather than logging an
+        # error and 500-spamming the client that polls this endpoint.
+        return jsonify({})
     except Exception as e:
         log.error(f"Error reading user_profiles.json: {str(e)}")
         return jsonify({}), 500

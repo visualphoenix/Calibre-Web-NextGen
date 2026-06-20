@@ -222,12 +222,12 @@ def cwa_update_available() -> tuple[bool, str, str]:
 # Gets the date the last cwa update notification was displayed
 def get_cwa_last_notification() -> str:
     current_date = datetime.now().strftime("%Y-%m-%d")
-    if not os.path.isfile('/app/cwa_update_notice'):
-        with open('/app/cwa_update_notice', 'w') as f:
+    if not os.path.isfile((os.environ.get('CWA_UPDATE_NOTICE_FILE') or '/app/cwa_update_notice')):
+        with open((os.environ.get('CWA_UPDATE_NOTICE_FILE') or '/app/cwa_update_notice'), 'w') as f:
             f.write(current_date)
         return "0001-01-01"
     else:
-        with open('/app/cwa_update_notice', 'r') as f:
+        with open((os.environ.get('CWA_UPDATE_NOTICE_FILE') or '/app/cwa_update_notice'), 'r') as f:
             last_notification = f.read()
     return last_notification
 
@@ -248,7 +248,7 @@ def cwa_update_notification() -> None:
             flash(_(message), category="cwa_update")
             print(f"[cwa-update-notification-service] {message}", flush=True)
 
-        with open('/app/cwa_update_notice', 'w') as f:
+        with open((os.environ.get('CWA_UPDATE_NOTICE_FILE') or '/app/cwa_update_notice'), 'w') as f:
             f.write(current_date)
         return
     else:
