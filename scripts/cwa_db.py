@@ -75,6 +75,20 @@ class CWA_DB:
             sys.exit(0)
         if con:
             cur = con.cursor()
+            # cwa.db ships as rollback-journal + synchronous=FULL, which rewrites a
+            # -journal file and fsyncs on every commit — brutal on write-through /
+            # network storage where each commit blocks on a media flush (and CWA
+            # writes a row here on every request via activity logging). When
+            # CWA_DB_SYNCHRONOUS is set, switch to WAL + that synchronous level
+            # (NORMAL is WAL-safe: only risks the last commit on power loss, never
+            # corruption). Unset = unchanged upstream (Docker) behavior.
+            sync = os.environ.get("CWA_DB_SYNCHRONOUS", "").upper()
+            if sync in {"OFF", "NORMAL", "FULL", "EXTRA", "0", "1", "2", "3"}:
+                try:
+                    cur.execute("PRAGMA journal_mode=WAL")
+                    cur.execute("PRAGMA synchronous=" + sync)
+                except sqlError as e:
+                    print(f"[cwa-db]: Could not apply CWA_DB_SYNCHRONOUS pragmas: {e}", flush=True)
             if self.verbose:
                 print("[cwa-db]: Connection with the CWA Enforcement DB Successful!")
             return con, cur
