@@ -88,7 +88,9 @@ log = logging.getLogger(__name__)
 
 # Default production cache root. Module-level (not constant) so tests can
 # `monkeypatch.setattr(mod, "CACHE_ROOT", tmp_path / ".cwa-preview-cache")`.
-CACHE_ROOT: Path = Path(CONFIG_DIR) / ".cwa-preview-cache"
+# CWA_PREVIEW_CACHE_DIR lets an operator relocate this Kobo cover cache (e.g. to
+# a RAM-backed dir on slow/network storage); unset = unchanged default.
+CACHE_ROOT: Path = Path(os.environ.get("CWA_PREVIEW_CACHE_DIR") or (Path(CONFIG_DIR) / ".cwa-preview-cache"))
 
 # 16 hex chars = 64 bits of key space. Birthday-collision probability is
 # ~1 in 2^32 at 4 billion entries; we're nowhere near that scale

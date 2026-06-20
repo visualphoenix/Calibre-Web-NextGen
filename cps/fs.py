@@ -7,7 +7,7 @@
 
 from . import logger
 from .constants import CACHE_DIR, CONFIG_DIR, CACHE_TYPE_THUMBNAILS
-from os import makedirs, remove
+from os import makedirs, remove, environ
 from os.path import isdir, isfile, join
 from shutil import rmtree
 
@@ -23,9 +23,11 @@ class FileSystem:
         return cls._instance
 
     def get_cache_dir(self, cache_type=None):
-        # Use /config/thumbnails for thumbnail cache to persist across container rebuilds
+        # Use /config/thumbnails for thumbnail cache to persist across container
+        # rebuilds. THUMBNAIL_CACHE_DIR lets an operator relocate it (e.g. to a
+        # RAM-backed dir on slow/network storage); unset = unchanged default.
         if cache_type == CACHE_TYPE_THUMBNAILS:
-            cache_dir = join(CONFIG_DIR, 'thumbnails')
+            cache_dir = environ.get('THUMBNAIL_CACHE_DIR') or join(CONFIG_DIR, 'thumbnails')
         else:
             cache_dir = self._cache_dir
             
