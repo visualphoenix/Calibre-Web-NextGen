@@ -446,7 +446,7 @@ def is_opds_book_exposed(book_id, user=None):
 def track_opds_access():
     """Track OPDS feed access for analytics"""
     try:
-        from scripts.cwa_db import CWA_DB
+        from cwa_db import CWA_DB
         from .cw_login import current_user
         import json as json_lib
         

@@ -1184,7 +1184,7 @@ def render_magic_shelf(shelf_id, sort_param, page):
 
         # Log activity
         try:
-            from scripts.cwa_db import CWA_DB
+            from cwa_db import CWA_DB
             cwa_db = CWA_DB()
             cwa_db.log_activity(
                 user_id=current_user.id,
@@ -2412,7 +2412,7 @@ def send_to_ereader(book_id, book_format, convert):
         ub.update_download(book_id, int(current_user.id))
         # Track email/send activity
         try:
-            from scripts.cwa_db import CWA_DB
+            from cwa_db import CWA_DB
             book = calibre_db.get_book(book_id)
             cwa_db = CWA_DB()
             cwa_db.log_activity(
@@ -2490,7 +2490,7 @@ def send_to_selected_ereaders(book_id):
             ub.update_download(book_id, int(current_user.id))
         # Track email/send activity
         try:
-            from scripts.cwa_db import CWA_DB
+            from cwa_db import CWA_DB
             book = calibre_db.get_book(book_id)
             cwa_db = CWA_DB()
             cwa_db.log_activity(
@@ -2595,7 +2595,7 @@ def handle_login_user(user, remember, message, category):
     
     # Track login activity
     try:
-        from scripts.cwa_db import CWA_DB
+        from cwa_db import CWA_DB
         cwa_db = CWA_DB()
         cwa_db.log_activity(
             user_id=int(user.id),
@@ -2771,7 +2771,7 @@ def login_post():
                 
                 # Track failed login attempt
                 try:
-                    from scripts.cwa_db import CWA_DB
+                    from cwa_db import CWA_DB
                     cwa_db = CWA_DB()
                     cwa_db.log_activity(
                         user_id=None,
@@ -2814,7 +2814,7 @@ def login_post():
                 
                 # Track failed login attempt
                 try:
-                    from scripts.cwa_db import CWA_DB
+                    from cwa_db import CWA_DB
                     cwa_db = CWA_DB()
                     cwa_db.log_activity(
                         user_id=None,
@@ -3388,7 +3388,7 @@ def read_book(book_id, book_format):
     # Track read activity
     if current_user.is_authenticated:
         try:
-            from scripts.cwa_db import CWA_DB
+            from cwa_db import CWA_DB
             
             # Detect source of book discovery
             source = request.args.get('from', 'direct')
