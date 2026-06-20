@@ -241,9 +241,10 @@ class Updater(threading.Thread):
             if not nsm:
                 return True
             cfg = constants.CONFIG_DIR.rstrip("/")
+            lib = constants.CALIBRE_LIBRARY_PATH.rstrip("/")
             return not (
                 path == cfg or path.startswith(cfg + "/") or
-                path == "/calibre-library" or path.startswith("/calibre-library/") or
+                path == lib or path.startswith(lib + "/") or
                 path == "/cwa-book-ingest" or path.startswith("/cwa-book-ingest/")
             )
         for src_dir, __, files in os.walk(root_src_dir):

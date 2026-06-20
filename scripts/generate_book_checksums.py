@@ -273,8 +273,8 @@ def main():
 
     parser.add_argument(
         '--library-path',
-        default='/calibre-library',
-        help='Path to Calibre library directory (default: /calibre-library)'
+        default=os.environ.get("CALIBRE_LIBRARY_PATH", "/calibre-library"),
+        help='Path to Calibre library directory (default: $CALIBRE_LIBRARY_PATH or /calibre-library)'
     )
 
     parser.add_argument(

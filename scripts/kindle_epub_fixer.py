@@ -50,6 +50,7 @@ change_logs_dir = os.environ.get("CWA_METADATA_CHANGE_LOGS_DIR") or "/app/calibr
 metadata_temp_dir = "/app/calibre-web-automated/metadata_temp"
 # Log file path
 CONFIG_DIR = os.environ.get("CALIBRE_DBPATH", "/config")
+CALIBRE_LIBRARY_PATH = os.environ.get("CALIBRE_LIBRARY_PATH", "/calibre-library")
 epub_fixer_log_file = os.path.join(CONFIG_DIR, "epub-fixer.log")
 
 ### LOGGING
@@ -367,7 +368,7 @@ class EPUBFixer:
                 return os.path.join(library_location, "metadata.db")
         except Exception:
             # Fallback to default location
-            return "/calibre-library/metadata.db"
+            return os.path.join(CALIBRE_LIBRARY_PATH, "metadata.db")
 
     def _recalculate_checksum_after_modification(self, book_id: int, file_format: str, file_path: str) -> None:
         """Calculate and store new checksum after modifying an EPUB file."""

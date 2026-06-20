@@ -30,7 +30,7 @@ def main():
 class AutoLibrary:
     def __init__(self):
         self.config_dir = os.environ.get("CALIBRE_DBPATH", "/config")
-        self.library_dir = "/calibre-library"
+        self.library_dir = os.environ.get("CALIBRE_LIBRARY_PATH", "/calibre-library")
         self.dirs_path = "/app/calibre-web-automated/dirs.json"
         self.app_db = os.path.join(self.config_dir, "app.db")
 

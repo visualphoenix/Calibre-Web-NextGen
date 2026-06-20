@@ -44,6 +44,10 @@ else:
     if getattr(sys, 'frozen', False):
         CONFIG_DIR = os.path.abspath(os.path.join(CONFIG_DIR, os.pardir))
 
+# Default Calibre library location. The Docker image mounts the library at
+# /calibre-library; non-container deployments can relocate it with this env.
+CALIBRE_LIBRARY_PATH = os.environ.get('CALIBRE_LIBRARY_PATH', '/calibre-library')
+
 
 DEFAULT_SETTINGS_FILE = "app.db"
 DEFAULT_GDRIVE_FILE = "gdrive.db"

@@ -112,7 +112,7 @@ def before_request():
     # Safety net: if not configured but metadata.db now exists at default location, auto-set without redirect loop
     if not config.db_configured:
         try:
-            default_metadata = '/calibre-library/metadata.db'
+            default_metadata = os.path.join(constants.CALIBRE_LIBRARY_PATH, 'metadata.db')
             if (not config.config_calibre_dir or not os.path.isfile(os.path.join(config.config_calibre_dir, 'metadata.db'))) \
                     and os.path.isfile(default_metadata):
                 config.config_calibre_dir = os.path.dirname(default_metadata)
@@ -2298,8 +2298,8 @@ def _db_simulate_change():
     incoming = param.get('config_calibre_dir', config.config_calibre_dir or '')
     incoming = strip_whitespaces(re.sub(r'[\\/]metadata\.db$', '', incoming, flags=re.IGNORECASE))
     # Fallback: if nothing provided and default metadata exists, assume /calibre-library
-    if not incoming and os.path.isfile('/calibre-library/metadata.db'):
-        incoming = '/calibre-library'
+    if not incoming and os.path.isfile(os.path.join(constants.CALIBRE_LIBRARY_PATH, 'metadata.db')):
+        incoming = constants.CALIBRE_LIBRARY_PATH
     to_save['config_calibre_dir'] = incoming
     db_valid, db_change = calibre_db.check_valid_db(to_save["config_calibre_dir"],
                                                     ub.app_DB_path,
@@ -2318,8 +2318,8 @@ def _db_configuration_update_helper():
         log.warning("DB config update missing config_calibre_dir; using current config value")
         incoming = config.config_calibre_dir or ''
     incoming = re.sub(r'[\\/]metadata\.db$', '', incoming, flags=re.IGNORECASE)
-    if not incoming and os.path.isfile('/calibre-library/metadata.db'):
-        incoming = '/calibre-library'
+    if not incoming and os.path.isfile(os.path.join(constants.CALIBRE_LIBRARY_PATH, 'metadata.db')):
+        incoming = constants.CALIBRE_LIBRARY_PATH
     to_save['config_calibre_dir'] = incoming
     db_valid = False
     try:

@@ -13,6 +13,10 @@ from datetime import datetime
 
 from tabulate import tabulate
 
+# Default Calibre library location (Docker mounts it at /calibre-library);
+# non-container deployments can relocate it with this env var.
+CALIBRE_LIBRARY_PATH = os.environ.get("CALIBRE_LIBRARY_PATH", "/calibre-library")
+
 
 class CWA_DB:
     def __init__(self, verbose=False):
@@ -1225,7 +1229,7 @@ class CWA_DB:
             import sqlite3
             
             # Connect to Calibre's metadata.db
-            metadata_db_path = "/calibre-library/metadata.db"
+            metadata_db_path = os.path.join(CALIBRE_LIBRARY_PATH, "metadata.db")
             metadata_con = sqlite3.connect(metadata_db_path, timeout=10)
             metadata_cur = metadata_con.cursor()
             
@@ -1262,7 +1266,7 @@ class CWA_DB:
             import sqlite3
             
             # Connect to Calibre's metadata.db
-            metadata_db_path = "/calibre-library/metadata.db"
+            metadata_db_path = os.path.join(CALIBRE_LIBRARY_PATH, "metadata.db")
             metadata_con = sqlite3.connect(metadata_db_path, timeout=10)
             metadata_cur = metadata_con.cursor()
             
@@ -1345,7 +1349,7 @@ class CWA_DB:
             import sqlite3
             
             # Connect to Calibre's metadata.db
-            metadata_db_path = "/calibre-library/metadata.db"
+            metadata_db_path = os.path.join(CALIBRE_LIBRARY_PATH, "metadata.db")
             metadata_con = sqlite3.connect(metadata_db_path, timeout=10)
             metadata_cur = metadata_con.cursor()
             
@@ -1465,7 +1469,7 @@ class CWA_DB:
             import sqlite3
             
             # Connect to Calibre's metadata.db
-            metadata_db_path = "/calibre-library/metadata.db"
+            metadata_db_path = os.path.join(CALIBRE_LIBRARY_PATH, "metadata.db")
             metadata_con = sqlite3.connect(metadata_db_path, timeout=10)
             metadata_cur = metadata_con.cursor()
             
@@ -1502,7 +1506,7 @@ class CWA_DB:
             import sqlite3
             
             # Connect to Calibre's metadata.db
-            metadata_db_path = "/calibre-library/metadata.db"
+            metadata_db_path = os.path.join(CALIBRE_LIBRARY_PATH, "metadata.db")
             metadata_con = sqlite3.connect(metadata_db_path, timeout=10)
             metadata_cur = metadata_con.cursor()
             
@@ -1980,7 +1984,7 @@ class CWA_DB:
         try:
             import sqlite3
             
-            metadata_db_path = "/calibre-library/metadata.db"
+            metadata_db_path = os.path.join(CALIBRE_LIBRARY_PATH, "metadata.db")
             metadata_con = sqlite3.connect(metadata_db_path, timeout=10)
             metadata_cur = metadata_con.cursor()
             
@@ -2125,7 +2129,7 @@ class CWA_DB:
                 return []
             
             # Pass 2: Enrich with book titles from metadata.db
-            metadata_db_path = "/calibre-library/metadata.db"
+            metadata_db_path = os.path.join(CALIBRE_LIBRARY_PATH, "metadata.db")
             metadata_con = sqlite3.connect(metadata_db_path, timeout=10)
             metadata_cur = metadata_con.cursor()
             
