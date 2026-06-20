@@ -395,8 +395,9 @@ def _get_ingest_path(uploaded_file, prefix_parts=None):
     try:
         nsm = os.getenv("NETWORK_SHARE_MODE", "false").strip().lower() in ("1", "true", "yes", "on")
         if not (nsm and ingest_dir == "/cwa-book-ingest"):
-            # Set ownership to abc:abc (uid=1000, gid=1000)
-            os.chown(ingest_dir, 1000, 1000)
+            # Set ownership to the service user (PUID:PGID, default 1000:1000 —
+            # the container's abc user). Numeric so it works without an abc user.
+            os.chown(ingest_dir, int(os.environ.get("PUID", 1000)), int(os.environ.get("PGID", 1000)))
     except (OSError, PermissionError) as e:
         # Log warning but don't crash the upload process
         log.warning('Failed to set ownership of ingest directory %s: %s', ingest_dir, e)

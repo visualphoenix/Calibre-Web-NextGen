@@ -1698,13 +1698,15 @@ class NewBookProcessor:
     def set_library_permissions(self):
         try:
             nsm = os.getenv("NETWORK_SHARE_MODE", "false").strip().lower() in ("1", "true", "yes", "on")
-            owner = os.environ.get("CWA_LIBRARY_OWNER") or "abc:abc"
+            # The container's abc user is PUID:PGID (default 1000:1000); use the
+            # numeric ids so this also works where no "abc" user exists.
+            owner = "{}:{}".format(os.environ.get("PUID", "1000"), os.environ.get("PGID", "1000"))
             if not nsm:
                 subprocess.run(["chown", "-R", owner, self.library_dir], check=True)
             else:
                 print(f"[ingest-processor] NETWORK_SHARE_MODE=true detected; skipping chown of {self.library_dir}", flush=True)
         except subprocess.CalledProcessError as e:
-            print(f"[ingest-processor] An error occurred while attempting to recursively set ownership of {self.library_dir} to abc:abc. See the following error:\n{e}", flush=True)
+            print(f"[ingest-processor] An error occurred while attempting to recursively set ownership of {self.library_dir} to {owner}. See the following error:\n{e}", flush=True)
 
 
 def main(filepath=None):
