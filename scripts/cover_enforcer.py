@@ -68,7 +68,7 @@ except Exception:
 
 # Global Variables
 dirs_json = "/app/calibre-web-automated/dirs.json"
-change_logs_dir = "/app/calibre-web-automated/metadata_change_logs"
+change_logs_dir = os.environ.get("CWA_METADATA_CHANGE_LOGS_DIR") or "/app/calibre-web-automated/metadata_change_logs"
 metadata_temp_dir = "/app/calibre-web-automated/metadata_temp"
 
 

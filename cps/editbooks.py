@@ -354,7 +354,7 @@ def edit_selected_books():
                     }
 
                     now = datetime.now()
-                    log_path = f'/app/calibre-web-automated/metadata_change_logs/{now.strftime("%Y%m%d%H%M%S")}-{book.id}.json'
+                    log_path = f'{os.environ.get("CWA_METADATA_CHANGE_LOGS_DIR") or "/app/calibre-web-automated/metadata_change_logs"}/{now.strftime("%Y%m%d%H%M%S")}-{book.id}.json'
                     with open(log_path, 'w', encoding='utf-8') as f:
                         json.dump(log_payload, f, indent=4, ensure_ascii=False)
                     log.debug(f"Created metadata change log for book {book.id} with changes: {list(log_payload.keys())}")
@@ -621,7 +621,7 @@ def edit_book_param(param, vals):
                 }
 
                 now = datetime.now()
-                log_path = f'/app/calibre-web-automated/metadata_change_logs/{now.strftime("%Y%m%d%H%M%S")}-{book.id}.json'
+                log_path = f'{os.environ.get("CWA_METADATA_CHANGE_LOGS_DIR") or "/app/calibre-web-automated/metadata_change_logs"}/{now.strftime("%Y%m%d%H%M%S")}-{book.id}.json'
                 with open(log_path, 'w', encoding='utf-8') as f:
                     json.dump(payload, f, indent=4, ensure_ascii=False)
                 log.debug(f"Created metadata change log for book {book.id} with changes: {list(payload.keys())}")
@@ -1045,7 +1045,7 @@ def do_edit_book(book_id, upload_formats=None):
                 }
 
                 now = datetime.now()
-                log_path = f'/app/calibre-web-automated/metadata_change_logs/{now.strftime("%Y%m%d%H%M%S")}-{book.id}.json'
+                log_path = f'{os.environ.get("CWA_METADATA_CHANGE_LOGS_DIR") or "/app/calibre-web-automated/metadata_change_logs"}/{now.strftime("%Y%m%d%H%M%S")}-{book.id}.json'
                 with open(log_path, 'w', encoding='utf-8') as f:
                     json.dump(payload, f, indent=4, ensure_ascii=False)
                 log.debug(f"Created metadata change log for book {book.id} with changes: {list(meaningful_changes.keys())}")
