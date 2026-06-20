@@ -55,7 +55,6 @@ from functools import wraps
 from flask import g, Blueprint, abort, request
 from .cw_login import login_user, current_user
 from flask_babel import gettext as _
-from flask_limiter import RateLimitExceeded
 from sqlalchemy.orm import joinedload
 
 from . import logger, config, calibre_db, db, helper, ub, lm, limiter
@@ -148,13 +147,6 @@ def requires_kobo_auth(f):
     def inner(*args, **kwargs):
         auth_token = get_auth_token()
         if auth_token is not None:
-            try:
-                None
-            except RateLimitExceeded:
-                return abort(429)
-            except (ConnectionError, Exception) as e:
-                log.error("Connection error to limiter backend: %s", e)
-                return abort(429)
             user = (
                 ub.session.query(ub.User)
                 .join(ub.RemoteAuthToken)

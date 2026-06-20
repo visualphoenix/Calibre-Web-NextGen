@@ -21,7 +21,6 @@ from flask import session as flask_session
 from flask_babel import gettext as _
 from flask_babel import get_locale
 from .cw_login import login_user, logout_user, current_user
-from flask_limiter import RateLimitExceeded
 from flask_limiter.util import get_remote_address
 from sqlalchemy.exc import IntegrityError, InvalidRequestError, OperationalError
 from sqlalchemy.sql.expression import text, func, false, not_, and_, or_, case
@@ -2512,22 +2511,21 @@ def send_to_selected_ereaders(book_id):
 
 # ################################### Login Logout ##################################################################
 
+def _register_rate_limit_response(_request_limit):
+    # Show the friendly notice instead of a bare 429 when the register rate
+    # limit is hit. flask-limiter (>=3.x) uses a Response returned here as the
+    # rate-limited response.
+    flash(_(u"Please wait one minute to register next user"), category="error")
+    return render_title_template('register.html', config=config, title=_("Register"), page="register")
+
+
 @web.route('/register', methods=['POST'])
-@limiter.limit("40/day", key_func=get_remote_address)
-@limiter.limit("3/minute", key_func=get_remote_address)
+@limiter.limit("40/day", key_func=get_remote_address, on_breach=_register_rate_limit_response)
+@limiter.limit("3/minute", key_func=get_remote_address, on_breach=_register_rate_limit_response)
 def register_post():
     if not config.config_public_reg:
         abort(404)
     to_save = request.form.to_dict()
-    try:
-        None
-    except RateLimitExceeded:
-        flash(_(u"Please wait one minute to register next user"), category="error")
-        return render_title_template('register.html', config=config, title=_("Register"), page="register")
-    except (ConnectionError, Exception) as e:
-        log.error("Connection error to limiter backend: %s", e)
-        flash(_("Connection error to limiter backend, please contact your administrator"), category="error")
-        return render_title_template('register.html', config=config, title=_("Register"), page="register")
     if current_user is not None and current_user.is_authenticated:
         return redirect(url_for('web.index'))
     if not config.get_mail_server_configured():
@@ -2674,9 +2672,19 @@ def login():
     return render_login()
 
 
+def _login_rate_limit_response(_request_limit):
+    # Re-render the login form with the friendly notice instead of a bare 429
+    # when the login rate limit is hit. flask-limiter (>=3.x) uses a Response
+    # returned here as the rate-limited response.
+    form = request.form.to_dict()
+    username = strip_whitespaces(form.get('username', "")).lower()
+    flash(_("Please wait one minute before next login"), category="error")
+    return render_login(username, form.get("password", ""))
+
+
 @web.route('/login', methods=['POST'])
-@limiter.limit("40/day", key_func=lambda: strip_whitespaces(request.form.get('username', "")).lower())
-@limiter.limit("3/minute", key_func=lambda: strip_whitespaces(request.form.get('username', "")).lower())
+@limiter.limit("40/day", key_func=lambda: strip_whitespaces(request.form.get('username', "")).lower(), on_breach=_login_rate_limit_response)
+@limiter.limit("3/minute", key_func=lambda: strip_whitespaces(request.form.get('username', "")).lower(), on_breach=_login_rate_limit_response)
 def login_post():
     if config.config_disable_standard_login:
         flash(_("Standard login is disabled."), category="error")
@@ -2684,15 +2692,6 @@ def login_post():
 
     form = request.form.to_dict()
     username = strip_whitespaces(form.get('username', "")).lower().replace("\n","").replace("\r","")
-    try:
-        None
-    except RateLimitExceeded:
-        flash(_("Please wait one minute before next login"), category="error")
-        return render_login(username, form.get("password", ""))
-    except (ConnectionError, Exception) as e:
-        log.error("Connection error to limiter backend: %s", e)
-        flash(_("Connection error to limiter backend, please contact your administrator"), category="error")
-        return render_login(username, form.get("password", ""))
     if current_user is not None and current_user.is_authenticated:
         return redirect(url_for('web.index'))
     if config.config_login_type == constants.LOGIN_LDAP and not services.ldap:

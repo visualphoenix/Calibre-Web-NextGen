@@ -182,7 +182,6 @@ def verify_password(username, password):
             if error is not None:
                 log.error(error)
         else:
-            None
             if check_password_hash(str(user.password), password):
                 [limiter.limiter.storage.clear(k.key) for k in limiter.current_limits]
                 return user
