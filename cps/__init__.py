@@ -196,6 +196,8 @@ def create_app():
     from .calibre_init import init_calibre_db_from_config
     init_calibre_db_from_config(config, cli_param.settings_path)
     calibre_db.init_db()
+    if os.environ.get("__RUN_MIGRATIONS_AND_EXIT"):
+        sys.exit(0)
 
     updater_thread.init_updater(config, web_server)
     # Perform dry run of updater and exit afterward

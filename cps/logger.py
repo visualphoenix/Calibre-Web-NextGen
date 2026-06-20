@@ -20,8 +20,8 @@ ACCESS_FORMATTER_TORNADO = Formatter("[%(asctime)s] %(message)s")
 
 FORMATTER           = Formatter("[%(asctime)s] %(levelname)5s {%(name)s:%(lineno)d} %(message)s")
 DEFAULT_LOG_LEVEL   = logging.INFO
-DEFAULT_LOG_FILE    = os.path.join(_CONFIG_DIR, "calibre-web.log")
-DEFAULT_ACCESS_LOG  = os.path.join(_CONFIG_DIR, "access.log")
+DEFAULT_LOG_FILE    = os.environ.get("CALIBRE_LOG_FILE") or os.path.join(_CONFIG_DIR, "calibre-web.log")
+DEFAULT_ACCESS_LOG  = os.environ.get("CALIBRE_ACCESS_LOG") or os.path.join(_CONFIG_DIR, "access.log")
 LOG_TO_STDERR       = '/dev/stderr'
 LOG_TO_STDOUT       = '/dev/stdout'
 
