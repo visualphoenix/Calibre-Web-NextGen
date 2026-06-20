@@ -1698,8 +1698,9 @@ class NewBookProcessor:
     def set_library_permissions(self):
         try:
             nsm = os.getenv("NETWORK_SHARE_MODE", "false").strip().lower() in ("1", "true", "yes", "on")
+            owner = os.environ.get("CWA_LIBRARY_OWNER") or "abc:abc"
             if not nsm:
-                subprocess.run(["chown", "-R", "abc:abc", self.library_dir], check=True)
+                subprocess.run(["chown", "-R", owner, self.library_dir], check=True)
             else:
                 print(f"[ingest-processor] NETWORK_SHARE_MODE=true detected; skipping chown of {self.library_dir}", flush=True)
         except subprocess.CalledProcessError as e:
