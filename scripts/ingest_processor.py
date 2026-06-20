@@ -541,11 +541,13 @@ def get_internal_api_headers():
     return {"X-Forwarded-For": "127.0.0.1"}
 
 def get_ingest_batch_dirty_file() -> str:
-    return os.environ.get("CWA_INGEST_BATCH_DIRTY_FILE", "/config/cwa_ingest_batch_dirty")
+    return os.environ.get("CWA_INGEST_BATCH_DIRTY_FILE") or os.path.join(
+        os.environ.get("CALIBRE_DBPATH", "/config"), "cwa_ingest_batch_dirty")
 
 
 def get_ingest_batch_active_file() -> str:
-    return os.environ.get("CWA_INGEST_BATCH_ACTIVE_FILE", "/config/cwa_ingest_batch_active")
+    return os.environ.get("CWA_INGEST_BATCH_ACTIVE_FILE") or os.path.join(
+        os.environ.get("CALIBRE_DBPATH", "/config"), "cwa_ingest_batch_active")
 
 
 def mark_ingest_batch_dirty() -> None:
