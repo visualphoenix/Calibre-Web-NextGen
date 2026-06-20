@@ -805,7 +805,7 @@ class NewBookProcessor:
         self.supported_audiobook_formats = {'m4b', 'm4a', 'mp4'}
 
         # Directories
-        self.ingest_folder, self.library_dir, self.tmp_conversion_dir = self.get_dirs("/app/calibre-web-automated/dirs.json")
+        self.ingest_folder, self.library_dir, self.tmp_conversion_dir = self.get_dirs(os.environ.get("CWA_DIRS_JSON") or "/app/calibre-web-automated/dirs.json")
         self.ingest_folder = os.path.normpath(self.ingest_folder)
         # Ensure library_dir is consistent with the main app's config
         app_db_path = get_app_db_path()
