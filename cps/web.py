@@ -1898,7 +1898,7 @@ def list_books():
         order = [db.Languages.lang_code.asc()] if order == "asc" else [db.Languages.lang_code.desc()]
         join = db.books_languages_link, db.Books.id == db.books_languages_link.c.book, db.Languages
     elif order and sort_param in ["sort", "title", "authors_sort", "series_index"]:
-        order = [text(sort_param + " " + order)]
+        order = [text(sort_param + " " + ("asc" if order == "asc" else "desc"))]
     elif not state:
         order = [db.Books.timestamp.desc()]
 
