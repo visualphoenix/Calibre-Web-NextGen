@@ -712,7 +712,7 @@ def run_duplicate_scan_for_books(book_ids) -> None:
     if _post_internal_endpoint(
         "/cwa-internal/run-duplicate-scan",
         payload={"book_ids": parsed_book_ids},
-        timeout=30,
+        timeout=int(os.environ.get("CWA_INGEST_DUPLICATE_SCAN_TIMEOUT") or "30"),
     ):
         print(
             f"[ingest-processor] Synchronous duplicate scan completed for book IDs: {parsed_book_ids}",
