@@ -60,7 +60,7 @@ log = logger.create()
 
 # Folder where the log files are stored
 LOG_ARCHIVE = "/config/log_archive"
-DIRS_JSON = "/app/calibre-web-automated/dirs.json"
+DIRS_JSON = os.environ.get("CWA_DIRS_JSON") or "/app/calibre-web-automated/dirs.json"
 
 # Debounced duplicate scan timer (web process)
 _duplicate_scan_timer = None

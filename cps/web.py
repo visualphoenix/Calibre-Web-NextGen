@@ -553,7 +553,7 @@ def get_sort_function(sort_param, data):
 
 def cwa_get_library_location() -> str:
     dirs = {}
-    with open('/app/calibre-web-automated/dirs.json', 'r') as f:
+    with open((os.environ.get('CWA_DIRS_JSON') or '/app/calibre-web-automated/dirs.json'), 'r') as f:
         dirs: dict[str, str] = json.load(f)
     library_dir = dirs['calibre_library_dir']
     return library_dir
