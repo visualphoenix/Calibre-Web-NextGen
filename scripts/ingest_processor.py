@@ -412,7 +412,7 @@ def _load_optional_cps_modules() -> None:
 def _ensure_processed_books_dirs() -> None:
     """Ensure processed backups directory structure exists so backups never crash on missing folders."""
     try:
-        processed_root = "/config/processed_books"
+        processed_root = os.path.join(os.environ.get("CALIBRE_DBPATH", "/config"), "processed_books")
         os.makedirs(processed_root, exist_ok=True)
         for name in ("converted", "imported", "fixed_originals", "failed"):
             os.makedirs(os.path.join(processed_root, name), exist_ok=True)
@@ -425,7 +425,7 @@ def _load_backup_destinations() -> None:
     try:
         backup_destinations = {
             entry.name: entry.path
-            for entry in os.scandir("/config/processed_books")
+            for entry in os.scandir(os.path.join(os.environ.get("CALIBRE_DBPATH", "/config"), "processed_books"))
             if entry.is_dir()
         }
     except FileNotFoundError:

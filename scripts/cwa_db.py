@@ -373,7 +373,7 @@ class CWA_DB:
                     if command.startswith('--') or not command:
                         continue
                     command = command.replace(',', ';')
-                    with open('/config/.cwa_db_debug', 'a') as f:
+                    with open(os.path.join(os.environ.get("CALIBRE_DBPATH", "/config"), ".cwa_db_debug"), 'a') as f:
                         f.write(command)
                     self.cur.execute(f"ALTER TABLE cwa_settings ADD {command}")  
                     self.con.commit()

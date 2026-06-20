@@ -238,7 +238,7 @@ def get_books_path():
         otherwise None to indicate the library path should be used.
     """
     try:
-        conn = sqlite3.connect("/config/app.db", timeout=30)
+        conn = sqlite3.connect(os.path.join(os.environ.get("CALIBRE_DBPATH", "/config"), "app.db"), timeout=30)
         cur = conn.cursor()
 
         # Check if split mode is enabled and get split path

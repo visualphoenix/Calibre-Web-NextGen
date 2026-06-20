@@ -25,6 +25,7 @@ on the new brand (or has a custom title) is a no-op.
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import sqlite3
 import sys
@@ -90,8 +91,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "db_path",
         nargs="?",
-        default="/config/app.db",
-        help="Path to app.db (default: /config/app.db)",
+        default=os.path.join(os.environ.get("CALIBRE_DBPATH", "/config"), "app.db"),
+        help="Path to app.db (default: $CALIBRE_DBPATH/app.db or /config/app.db)",
     )
     args = parser.parse_args(argv)
 

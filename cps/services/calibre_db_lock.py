@@ -34,6 +34,8 @@ import os
 import time
 from contextlib import contextmanager
 
+from ..constants import CONFIG_DIR
+
 try:
     import fcntl
 
@@ -43,7 +45,7 @@ except ImportError:  # pragma: no cover — Windows
     HAS_FCNTL = False
 
 
-DEFAULT_LOCK_DIR = "/config"
+DEFAULT_LOCK_DIR = CONFIG_DIR
 DEFAULT_LOCK_BASENAME = ".cwa-metadata-write.lock"
 DEFAULT_TIMEOUT_SECONDS = 120.0
 

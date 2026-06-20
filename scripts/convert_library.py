@@ -25,7 +25,8 @@ from cwa_db import CWA_DB
 from kindle_epub_fixer import EPUBFixer
 
 ### Global Variables
-convert_library_log_file = "/config/convert-library.log"
+CONFIG_DIR = os.environ.get("CALIBRE_DBPATH", "/config")
+convert_library_log_file = os.path.join(CONFIG_DIR, "convert-library.log")
 
 # Define the logger
 logger = logging.getLogger(__name__)
@@ -100,7 +101,7 @@ def _acquire_lock_or_exit():
 try:
     backup_destinations = {
             entry.name: entry.path
-            for entry in os.scandir("/config/processed_books")
+            for entry in os.scandir(os.path.join(CONFIG_DIR, "processed_books"))
             if entry.is_dir()
         }
 except FileNotFoundError:
@@ -169,7 +170,7 @@ class LibraryConverter:
 
     def get_split_library(self) -> dict[str, str] | None:
         """Checks whether or not the user has split library enabled. Returns None if they don't and the path of the Split Library location if True."""
-        con = sqlite3.connect("/config/app.db", timeout=30)
+        con = sqlite3.connect(os.path.join(CONFIG_DIR, "app.db"), timeout=30)
         cur = con.cursor()
         split_library = cur.execute('SELECT config_calibre_split FROM settings;').fetchone()[0]
 
@@ -478,7 +479,7 @@ class LibraryConverter:
             except subprocess.CalledProcessError as e:
                 print_and_log(f"[convert-library]: ({self.current_book}/{len(self.to_convert)}) Import of {os.path.basename(target_filepath)} was not successfully completed. Converted file moved to /config/processed_books/failed/{os.path.basename(target_filepath)}. See the following error:\n{e}")
                 try:
-                    output_path = f"/config/processed_books/failed/{os.path.basename(target_filepath)}"
+                    output_path = os.path.join(CONFIG_DIR, "processed_books/failed", os.path.basename(target_filepath))
                     shutil.move(target_filepath, output_path)
                 except Exception as e:
                     print_and_log(f"[convert-library]: ERROR - The following error occurred when trying to copy {file} to {output_path}:\n{e}")

@@ -3101,7 +3101,7 @@ def restore_calibre_db():
             flash(_("Restore failed: metadata.db not found at %(path)s", path=metadata_path), category="error")
             return redirect(url_for("admin.db_configuration"))
 
-        app_db_path = ub.app_DB_path or cli_param.settings_path or "/config/app.db"
+        app_db_path = ub.app_DB_path or cli_param.settings_path or os.path.join(constants.CONFIG_DIR, "app.db")
         if not os.path.exists(app_db_path):
             flash(_("Restore failed: app.db not found at %(path)s", path=app_db_path), category="error")
             return redirect(url_for("admin.db_configuration"))
@@ -3111,7 +3111,7 @@ def restore_calibre_db():
             lock_file.write(str(os.getpid()))
 
         # 1. Backup both DBs
-        backup_dir = f"/config/backup/restore_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        backup_dir = os.path.join(constants.CONFIG_DIR, f"backup/restore_{datetime.now().strftime('%Y%m%d_%H%M%S')}")
         os.makedirs(backup_dir, exist_ok=True)
         shutil.copy2(metadata_path, os.path.join(backup_dir, "metadata.db.bak"))
         shutil.copy2(app_db_path, os.path.join(backup_dir, "app.db.bak"))

@@ -67,6 +67,7 @@ except Exception:
     unidecode = None
 
 # Global Variables
+CONFIG_DIR = os.environ.get("CALIBRE_DBPATH", "/config")
 dirs_json = "/app/calibre-web-automated/dirs.json"
 change_logs_dir = os.environ.get("CWA_METADATA_CHANGE_LOGS_DIR") or "/app/calibre-web-automated/metadata_change_logs"
 metadata_temp_dir = "/app/calibre-web-automated/metadata_temp"
@@ -131,7 +132,7 @@ class Book:
 
     def get_split_library(self) -> dict[str, str] | None:
         """Checks whether or not the user has split library enabled. Returns None if they don't and the path of the Split Library location if True."""
-        con = sqlite3.connect("/config/app.db", timeout=60)
+        con = sqlite3.connect(os.path.join(CONFIG_DIR, "app.db"), timeout=60)
         cur = con.cursor()
         split_library = cur.execute('SELECT config_calibre_split FROM settings;').fetchone()[0]
 
@@ -261,7 +262,7 @@ class Enforcer:
 
         # Read Calibre-Web setting: config_unicode_filename (True -> transliterate non-English in filenames)
         try:
-            with sqlite3.connect("/config/app.db", timeout=60) as con:
+            with sqlite3.connect(os.path.join(CONFIG_DIR, "app.db"), timeout=60) as con:
                 cur = con.cursor()
                 self.unicode_filename = bool(cur.execute('SELECT config_unicode_filename FROM settings;').fetchone()[0])
         except Exception:
@@ -280,7 +281,7 @@ class Enforcer:
 
     def get_split_library(self) -> dict[str, str] | None:
         """Checks whether or not the user has split library enabled. Returns None if they don't and the path of the Split Library location if True."""
-        con = sqlite3.connect("/config/app.db", timeout=60)
+        con = sqlite3.connect(os.path.join(CONFIG_DIR, "app.db"), timeout=60)
         cur = con.cursor()
         split_library = cur.execute('SELECT config_calibre_split FROM settings;').fetchone()[0]
 

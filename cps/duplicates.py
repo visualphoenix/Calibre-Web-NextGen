@@ -21,6 +21,7 @@ import time
 from shutil import copyfile
 
 from . import db, calibre_db, logger, ub, csrf, config, helper, user_book_data
+from .constants import CONFIG_DIR
 from .services.worker import WorkerThread, STAT_FINISH_SUCCESS, STAT_FAIL, STAT_ENDED, STAT_CANCELLED
 from .admin import admin_required  
 from .usermanagement import login_required_if_no_ano
@@ -1604,7 +1605,7 @@ def auto_resolve_duplicates(strategy='newest', dry_run=False, user_id=None, trig
         # Disk space check (strategy-dependent thresholds)
         try:
             import shutil as shutil_disk
-            stat = shutil_disk.disk_usage('/config')
+            stat = shutil_disk.disk_usage(CONFIG_DIR)
             available_gb = stat.free / (1024**3)
             
             # Merge strategy needs more space (copies formats before deletion)
@@ -1753,7 +1754,7 @@ def auto_resolve_duplicates(strategy='newest', dry_run=False, user_id=None, trig
                 book_to_keep = book_to_keep_ref
 
                 deleted_ids = []
-                backup_dir = f"/config/processed_books/duplicate_resolutions/{datetime.now().strftime('%Y%m%d_%H%M%S')}_group_{group['group_hash'][:8]}"
+                backup_dir = os.path.join(CONFIG_DIR, f"processed_books/duplicate_resolutions/{datetime.now().strftime('%Y%m%d_%H%M%S')}_group_{group['group_hash'][:8]}")
                 os.makedirs(backup_dir, exist_ok=True)
 
                 if strategy == 'merge':

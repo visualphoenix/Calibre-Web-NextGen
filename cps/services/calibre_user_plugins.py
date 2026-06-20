@@ -45,9 +45,11 @@ import os
 from pathlib import Path
 from typing import Mapping
 
+from ..constants import CONFIG_DIR
+
 
 _ENV_VAR = "CWA_CALIBRE_USER_PLUGINS"
-_HOME = "/config"
+_HOME = CONFIG_DIR
 _PLUGINS_SUBPATH = ".config/calibre/plugins"
 _TRUTHY = frozenset({"1", "true", "yes", "on"})
 

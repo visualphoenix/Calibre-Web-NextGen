@@ -21,6 +21,7 @@ from flask_babel.speaklater import LazyString
 
 from . import logger, config
 from .about import collect_stats
+from .constants import CONFIG_DIR
 
 log = logger.create()
 
@@ -183,7 +184,7 @@ _IPV6_PATTERN = re.compile(
 )
 
 # Per-install absolute paths likely to identify the user.
-_CONFIG_PATH_PATTERN = re.compile(r"/config/")
+_CONFIG_PATH_PATTERN = re.compile(re.escape(CONFIG_DIR.rstrip("/")) + "/")
 _LIBRARY_PATH_PATTERN = re.compile(r"/calibre-library/")
 
 # Auth header values.

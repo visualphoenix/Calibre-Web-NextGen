@@ -15,7 +15,7 @@ from cwa_db import CWA_DB
 
 class AutoZipper:
     def __init__(self):
-        self.archive_dirs_stem = "/config/processed_books/"
+        self.archive_dirs_stem = os.path.join(os.environ.get("CALIBRE_DBPATH", "/config"), "processed_books") + "/"
         self.converted_dir = self.archive_dirs_stem + "converted/"
         self.failed_dir = self.archive_dirs_stem + "failed/"
         self.imported_dir = self.archive_dirs_stem + "imported/"

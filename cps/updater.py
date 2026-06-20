@@ -240,8 +240,9 @@ class Updater(threading.Thread):
         def should_chown(path):
             if not nsm:
                 return True
+            cfg = constants.CONFIG_DIR.rstrip("/")
             return not (
-                path == "/config" or path.startswith("/config/") or
+                path == cfg or path.startswith(cfg + "/") or
                 path == "/calibre-library" or path.startswith("/calibre-library/") or
                 path == "/cwa-book-ingest" or path.startswith("/cwa-book-ingest/")
             )

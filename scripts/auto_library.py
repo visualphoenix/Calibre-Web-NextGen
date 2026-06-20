@@ -29,10 +29,10 @@ def main():
 
 class AutoLibrary:
     def __init__(self):
-        self.config_dir = "/config"
+        self.config_dir = os.environ.get("CALIBRE_DBPATH", "/config")
         self.library_dir = "/calibre-library"
         self.dirs_path = "/app/calibre-web-automated/dirs.json"
-        self.app_db = "/config/app.db"
+        self.app_db = os.path.join(self.config_dir, "app.db")
 
         self.empty_appdb = "/app/calibre-web-automated/empty_library/app.db"
         self.empty_metadb = "/app/calibre-web-automated/empty_library/metadata.db"
@@ -198,7 +198,7 @@ class AutoLibrary:
         # read them at conversion time.
         try:
             subprocess.run(
-                ["chown", "-R", "abc:abc", "/config/.config/calibre"],
+                ["chown", "-R", "abc:abc", os.path.join(self.config_dir, ".config/calibre")],
                 check=False,
             )
         except Exception as e:
@@ -222,7 +222,7 @@ class AutoLibrary:
             # /config is always a local volume.
             try:
                 subprocess.run(
-                    ["chown", "-R", "abc:abc", "/config/.config/calibre"],
+                    ["chown", "-R", "abc:abc", os.path.join(self.config_dir, ".config/calibre")],
                     check=False,
                 )
             except Exception:

@@ -16,6 +16,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import joinedload
 
 from . import calibre_db, db, logger
+from .constants import CONFIG_DIR
 from .duplicates import (
     _AWARE_MIN,
     _timestamp_or_default,
@@ -35,8 +36,8 @@ log = logger.create()
 NORMALIZATION_VERSION = "duplicate-index-v3"  # v3: + accent-fold (NFKD) + punctuation-to-space, precision-preserving (D6)
 MAX_INCREMENTAL_BOOK_IDS = 1000
 DUPLICATE_INDEX_REBUILD_BATCH_SIZE = 250
-INGEST_BATCH_DIRTY_FILE = "/config/cwa_ingest_batch_dirty"
-INGEST_BATCH_ACTIVE_FILE = "/config/cwa_ingest_batch_active"
+INGEST_BATCH_DIRTY_FILE = os.path.join(CONFIG_DIR, "cwa_ingest_batch_dirty")
+INGEST_BATCH_ACTIVE_FILE = os.path.join(CONFIG_DIR, "cwa_ingest_batch_active")
 
 CRITERIA_KEYS = (
     "duplicate_detection_title",
