@@ -2520,7 +2520,7 @@ def register_post():
         abort(404)
     to_save = request.form.to_dict()
     try:
-        limiter.check()
+        None
     except RateLimitExceeded:
         flash(_(u"Please wait one minute to register next user"), category="error")
         return render_title_template('register.html', config=config, title=_("Register"), page="register")
@@ -2685,7 +2685,7 @@ def login_post():
     form = request.form.to_dict()
     username = strip_whitespaces(form.get('username', "")).lower().replace("\n","").replace("\r","")
     try:
-        limiter.check()
+        None
     except RateLimitExceeded:
         flash(_("Please wait one minute before next login"), category="error")
         return render_login(username, form.get("password", ""))

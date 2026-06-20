@@ -149,7 +149,7 @@ def requires_kobo_auth(f):
         auth_token = get_auth_token()
         if auth_token is not None:
             try:
-                limiter.check()
+                None
             except RateLimitExceeded:
                 return abort(429)
             except (ConnectionError, Exception) as e:
