@@ -613,7 +613,7 @@ def autodetect_calibre_binaries():
     elif sys.platform.startswith("freebsd"):
         calibre_path = ["/usr/local/bin/"]
     else:
-        calibre_path = ["/opt/calibre/"]
+        calibre_path = [os.environ.get("CALIBRE_BINARY_DIR") or "/opt/calibre/"]
     for element in calibre_path:
         supported_binary_paths = [os.path.join(element, binary)
                                   for binary in constants.SUPPORTED_CALIBRE_BINARIES.values()]
@@ -659,7 +659,9 @@ def autodetect_kepubify_binary():
     elif sys.platform.startswith("freebsd"):
         calibre_path = ["/usr/local/bin/kepubify"]
     else:
-        calibre_path = ["/opt/kepubify/kepubify-linux-64bit", "/opt/kepubify/kepubify-linux-32bit"]
+        kepubify_dir = os.environ.get("KEPUBIFY_BINARY_DIR") or "/opt/kepubify"
+        calibre_path = [os.path.join(kepubify_dir, "kepubify-linux-64bit"),
+                        os.path.join(kepubify_dir, "kepubify-linux-32bit")]
     for element in calibre_path:
         if os.path.isfile(element) and os.access(element, os.X_OK):
             return element
