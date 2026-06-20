@@ -2674,6 +2674,32 @@ def create_system_magic_shelves_for_user(user_id):
         return 0
 
 
+# app.db journals in WAL mode; synchronous=FULL fsyncs on every commit, which
+# is punishingly slow on write-through/network storage (each commit blocks on a
+# media flush, holding SQLite's single writer lock). CALIBRE_DB_SYNCHRONOUS lets
+# an operator relax this to NORMAL (WAL-safe: only risks losing the last commit
+# on a hard power loss, never corruption). Default FULL = unchanged behavior.
+_DB_SYNCHRONOUS = os.environ.get("CALIBRE_DB_SYNCHRONOUS", "FULL").upper()
+if _DB_SYNCHRONOUS not in {"OFF", "NORMAL", "FULL", "EXTRA", "0", "1", "2", "3"}:
+    _DB_SYNCHRONOUS = "FULL"
+
+
+def _set_app_db_pragmas(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    try:
+        cursor.execute("PRAGMA synchronous=" + _DB_SYNCHRONOUS)
+    finally:
+        cursor.close()
+
+
+def _create_app_engine(db_path):
+    engine = create_engine('sqlite:///{0}'.format(db_path), echo=False,
+                           connect_args={'timeout': 30})
+    if _DB_SYNCHRONOUS != "FULL":
+        event.listen(engine, "connect", _set_app_db_pragmas)
+    return engine
+
+
 def init_db_thread():
     global app_DB_path
     if not app_DB_path:
@@ -2686,8 +2712,7 @@ def init_db_thread():
         raise RuntimeError(
             "ub.init_db_thread() called before ub.init_db(); app_DB_path "
             "is unset, refusing to create a stray 'None' SQLite file")
-    engine = create_engine('sqlite:///{0}'.format(app_DB_path), echo=False,
-                           connect_args={'timeout': 30})
+    engine = _create_app_engine(app_DB_path)
 
     Session = scoped_session(sessionmaker())
     Session.configure(bind=engine)
@@ -2700,8 +2725,7 @@ def init_db(app_db_path):
     global app_DB_path
 
     app_DB_path = app_db_path
-    engine = create_engine('sqlite:///{0}'.format(app_db_path), echo=False,
-                           connect_args={'timeout': 30})
+    engine = _create_app_engine(app_db_path)
 
     Session = scoped_session(sessionmaker())
     Session.configure(bind=engine)
@@ -2771,8 +2795,7 @@ def password_change(user_credentials=None):
 
 
 def get_new_session_instance():
-    new_engine = create_engine('sqlite:///{0}'.format(app_DB_path), echo=False,
-                               connect_args={'timeout': 30})
+    new_engine = _create_app_engine(app_DB_path)
     new_session = scoped_session(sessionmaker())
     new_session.configure(bind=new_engine)
 
